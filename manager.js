@@ -1,9 +1,9 @@
 "user strict";
-const events = require('./events-pool');
+const events = require('./module/events-pool');
 const { faker } = require('@faker-js/faker');
 
-require('./pilot');
-require('./system');
+require('./module/pilot');
+require('./module/system');
 
 
 const flightId = faker.datatype.uuid();

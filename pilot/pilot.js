@@ -1,26 +1,35 @@
 'use strict';
 
-const events = require('./events-pool');
+require('dotenv').config();
+
+const io = require('socket.io-client');
+
+const socket = io.connect(`http://localhost:${process.env.PORT}`)
+
+let host = `http://localhost:${process.env.PORT}/airline`;
+
+const airlineSystem = io.connect(host);
+
 const { faker } = require('@faker-js/faker');
-require('./system');
 
 const flightId = faker.datatype.uuid();
 
 
 
 
-events.on('new-flight', pilot);
+airlineSystem.on('new-flight', pilot);
+
 function pilot() {
   setTimeout(() => {
     let tookoffAlert = `flight number ${flightId} Just took-off`;
     console.log(tookoffAlert);
-    events.emit('took-off', tookoffAlert);
+    socket.emit('took-off', tookoffAlert);
   }, 4000);
 
   setTimeout(() => {
     let arriveAlert = `flight number ${flightId} has arrived to destination`;
     console.log(arriveAlert);
-    events.emit('Arrived', arriveAlert);
+    socket.emit('Arrived', arriveAlert);
   }, 7000);
 
 }

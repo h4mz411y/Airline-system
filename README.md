@@ -5,10 +5,10 @@
 
 ## UMI
 
-![UMI](./resourcers/Event-driven-UMI.PNG)
+![UMI](./assest/Event-driven-UMI.PNG)
 
 ## test
 
-![test](./resourcers/Event-deriven-test.PNG)
+![test](./assest/airlineSystem2Terminaltest.PNG)
 
 

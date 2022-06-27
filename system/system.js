@@ -1,19 +1,49 @@
 'use strict';
+require('dotenv').config();
 
-const events = require("./events-pool");
+const PORT = process.env.PORT || 3030;
+
+const ioServer = require('socket.io')(PORT);
+
 const { faker } = require('@faker-js/faker');
-require('./pilot');
+
 
 
 const airline = 'Royal Jordanian Airlines';
 const flightId = faker.datatype.uuid();
 const pilotName = faker.name.findName();
-let destination = faker.address.cityName();
+const destination = faker.address.cityName();
 
-events.on('new-flight', NewFlight);
-events.on('took-off', tookoffAlert);
-events.on('Arrived', arriveAlert);
 
+
+
+//namespace
+const airlineSystem = ioServer.of('/airline');
+airlineSystem.on('connection', (socket) => {
+    console.log('connected to airline ', socket.id);
+    socket.on('new-flight', () => {
+      airlineSystem.emit('took-off', tookoffAlert);
+    });
+});
+
+// Start a socket.io server on a specific port (add the port number to the .env file). 
+
+
+
+ioServer.on('connection', (socket) => {
+  console.log('connected to server', socket.id);
+
+  socket.on('new-flight', () => {
+    NewFlight();
+    airlineSystem.emit('new-flight');
+  });
+  socket.on('Arrived', arriveAlert);
+  socket.on('Arrived', () => {
+    airlineSystem.emit('Arrived');
+  });
+
+
+});
 
 function NewFlight() {
   let NewFlight = {
@@ -61,3 +91,10 @@ function arriveAlert() {
   };
   console.log(NewFlight);
 }
+
+
+
+
+
+
+

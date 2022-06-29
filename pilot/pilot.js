@@ -14,6 +14,8 @@ const { faker } = require('@faker-js/faker');
 
 const flightId = faker.datatype.uuid();
 
+socket.emit('get-all');
+airlineSystem.emit('get-all');
 
 
 

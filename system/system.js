@@ -14,11 +14,14 @@ const flightId = faker.datatype.uuid();
 const pilotName = faker.name.findName();
 const destination = faker.address.cityName();
 
-
+const queue = {
+  flights: {}
+};
 
 
 //namespace
 const airlineSystem = ioServer.of('/airline');
+
 airlineSystem.on('connection', (socket) => {
     console.log('connected to airline ', socket.id);
     socket.on('new-flight', () => {
@@ -33,16 +36,22 @@ airlineSystem.on('connection', (socket) => {
 ioServer.on('connection', (socket) => {
   console.log('connected to server', socket.id);
 
-  socket.on('new-flight', () => {
+  socket.on('new-flight', (payload) => {
     NewFlight();
     airlineSystem.emit('new-flight');
+    const id = faker.datatype.uuid();
+    queue.flights[id] = payload;
   });
+
   socket.on('Arrived', arriveAlert);
-  socket.on('Arrived', () => {
+  socket.on('Arrived', (payload) => {
     airlineSystem.emit('Arrived');
+    console.log(payload);
   });
-
-
+  socket.on('get-all', () => {
+    socket.emit('flight', queue.flights);
+    queue.flights = {};
+  });
 });
 
 function NewFlight() {
@@ -74,10 +83,10 @@ function tookoffAlert() {
     },
   };
   console.log(NewFlight);
-  console.log(NewFlight);
+ 
 }
 function arriveAlert() {
-  let NewFlight = {
+  let arrive = {
     Flight: {
       event: 'arrived',
       time: faker.date.past(),
@@ -89,7 +98,7 @@ function arriveAlert() {
       },
     },
   };
-  console.log(NewFlight);
+  console.log(arrive);
 }
 
 
